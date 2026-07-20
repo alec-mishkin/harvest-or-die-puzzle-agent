@@ -1,9 +1,7 @@
 
 from pydantic import BaseModel
 
-Board = list[list[str]]
-
-class BoardState(BaseModel):
+class Tile(BaseModel):
     """
         the state of the game board every turn
     """
@@ -20,4 +18,4 @@ class GameState(BaseModel):
     """
     current_turn : int
     max_turn: int
-    board_states: list[BoardState]
+    tiles: list[Tile]

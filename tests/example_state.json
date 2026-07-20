@@ -1,1 +1,1 @@
-{"current_turn":1,"max_turn":9,"board_states":[{"x_pos":0,"y_pos":3,"bunny":false,"slime":false,"tile_type":"yellow_plant"},{"x_pos":1,"y_pos":3,"bunny":true,"slime":false,"tile_type":"yellow_plant"},{"x_pos":2,"y_pos":3,"bunny":false,"slime":false,"tile_type":"yellow_plant"}]}
+{"current_turn":1,"max_turn":9,"tiles":[{"x_pos":0,"y_pos":3,"bunny":false,"slime":false,"tile_type":"yellow_plant"},{"x_pos":1,"y_pos":3,"bunny":true,"slime":false,"tile_type":"yellow_plant"},{"x_pos":2,"y_pos":3,"bunny":false,"slime":false,"tile_type":"yellow_plant"}]}

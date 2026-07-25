@@ -5,6 +5,7 @@ conda-meta/
 
 # Python cache
 __pycache__/
+*.egg-info
 *.py[cod]
 
 # Pytest

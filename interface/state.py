@@ -15,7 +15,7 @@ class TileType(StrEnum):
     HOLE = "hole"
     GROUND = "ground"
     WALL = "wall"
-    SPWAN = "spawn"
+    SPAWN = "spawn"
     DIAGONAL_SPAWN = "diagonal_spawn"
 
 class Position(BaseModel):
@@ -26,7 +26,7 @@ class Position(BaseModel):
 class Predator(BaseModel):
     pos: Position
     next_pos: Position | None #Telegraphed target for next turn
-    diagnoal: bool #Whether or not the predator will move in a diagonal or cartesian methodology
+    diagonal: bool #Whether or not the predator will move in a diagonal or cartesian methodology
 
 
 class Tile(BaseModel):

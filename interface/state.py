@@ -1,5 +1,5 @@
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from enum import StrEnum
 
 class Color(StrEnum):
@@ -19,6 +19,7 @@ class TileType(StrEnum):
     DIAGONAL_SPAWN = "diagonal_spawn"
 
 class Position(BaseModel):
+    model_config = ConfigDict(frozen=True)
     x: int
     y: int
 

@@ -1,16 +1,16 @@
 from game.level_solver import Sim, State, CT, Color as SolverColor
-from interface.state import GameSTate, Tile, Position, Predator, Color, TileType
+from interface.state import GameState, Tile, Position, Predator, Color, TileType
 
-TILE_TYE_MAP = {
+TILE_TYPE_MAP = {
         CT.HOLE: TileType.HOLE, CT.GROUND: TileType.GROUND, CT.BUSH: TileType.BUSH,
         CT.PLANT: TileType.PLANT, CT.SPAWN: TileType.SPAWN,
         CT.DIAGONAL_SPAWN: TileType.DIAGONAL_SPAWN,
-        CT.EMPTY: TileType.Wall,    #rename: solver's EMPTY means wall
+        CT.EMPTY: TileType.WALL,    #rename: solver's EMPTY means wall
 }
 
 COLOR_MAP = {
-        SolverColor.RED: Color.RED, SolverColor.BLUE: Color.Blue,
-        SolverColor.PURPLE: Color.Purple, SolverColor.YELLOW: Color.YELLOW,
+        SolverColor.RED: Color.RED, SolverColor.BLUE: Color.BLUE,
+        SolverColor.PURPLE: Color.PURPLE, SolverColor.YELLOW: Color.YELLOW,
         SolverColor.NONE: Color.NONE,
 }
 
@@ -19,14 +19,14 @@ def _pos(t: tuple[int,int]) -> Position:
 
 def to_game_state(sim: Sim, state: State) -> GameState:
     tiles = []
-    for pos in sim.level.static)cells:
+    for pos in sim.level.static_cells:
         ct = sim.cell_type(state, pos)
         tiles.append(Tile(
             pos=_pos(pos),
             tile_type=TILE_TYPE_MAP[ct],
-            color=COLOR_MAP[sim.cell_color(state, pos)] i f ct is CT.PLANT else Color.NONE,
+            color=COLOR_MAP[sim.cell_color(state, pos)] if ct is CT.PLANT else Color.NONE,
             hole_color=sim.hole_counter(state,pos),
-            secored=pos in sim.scpred_cells,
+            secored=pos in sim.scored_cells,
         ))
     predators = [
         Predator(

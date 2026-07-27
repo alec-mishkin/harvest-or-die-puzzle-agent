@@ -31,7 +31,7 @@ def to_game_state(sim: Sim, state: State) -> GameState:
         tiles.append(Tile(
             pos=_pos(pos),
             tile_type=TILE_TYPE_MAP[ct],
-            color=COLOR_MAP[sim.cell_color(state, pos)] if ct is CT.PLANT else Color.NONE,
+            color=COLOR_MAP[sim.cell_color(state, pos)] if pos in sim.plant_index else Color.NONE,,
             hole_counter=sim.hole_counter(state,pos),
             scored=pos in sim.scored_cells,
         ))

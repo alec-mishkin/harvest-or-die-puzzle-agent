@@ -16,3 +16,7 @@ class Turn(BaseModel):
             description="Adjacent tile to harvest"
     )
     move: Direction = Field (description="Direction to step")
+    @field_validator("harvest", "move", mode="before")
+    @classmethod
+    def _normalize_case(cls, v):
+        return v.lower() if isinstance(v, str) else v

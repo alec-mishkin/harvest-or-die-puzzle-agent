@@ -20,7 +20,7 @@ def _describe(t: Tile) -> str:
         return f"a {t.color} plant"
     return t.tile_type.replace("_", " " )
 
-def to_prompt(gs: GameState) -> str:
+def render_board(gs: GameState) -> str:
     by_pos = {t.pos: t for t in gs.tiles}
     width = max(p.x for p in by_pos) + 1
     height = max(p.y for p in by_pos) + 1
@@ -40,14 +40,18 @@ def to_prompt(gs: GameState) -> str:
         rows.append(f" {y} " + " ".join(cells))
     rows.append("   " + " ".join(str(x) for x in range(width)))
     board = "\n".join(rows)
-    
+    return board
+
+def to_prompt(gs: GameState) -> str:
+    board = render_board(gs)
+    under = next(t for t in gs.tiles if t.pos == gs.bunny)
     scored = [ t for t in gs.tiles if t.scored and t.tile_type in (TileType.PLANT, TileType.HOLE)]
     tally = Counter(t.color if t.tile_type is TileType.PLANT else "hole" for t in scored)
     tally_str = ", ".join(f"{n} {k}" for k, n in sorted(tally.items(), key=lambda kv: -kv[1]))
     lines = [
         f"Turn {gs.current_turn}/{gs.max_turn}  ({gs.max_turn - gs.current_turn} moves left)",
         f"Held seed: {gs.held_seed.upper()}  (harvested plants regrow this color)",
-        f"You are at ({gs.bunny.x},{gs.bunny.y}) standing on: {_describe(by_pos[gs.bunny])}",
+        f"You are at ({gs.bunny.x},{gs.bunny.y}) standing on: {_describe(under)}",
         "",
         "Goal: every scoring tile the same color, and no holes.",
         f"Currently: {tally_str}",
@@ -55,7 +59,7 @@ def to_prompt(gs: GameState) -> str:
         board,
         "",
         "Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)",
-        "        # wall | s spawn | * bush | o hole with no color"
+        "        # wall | s spawn | * bush | o hole with no color",
         "Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).",
 
     ]

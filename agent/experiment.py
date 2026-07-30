@@ -16,7 +16,9 @@ def git_sha():
                              capture_output=True, text=True, check=True)
         dirty = subprocess.run(["git", "status", "--porcelain"],
                                capture_output=True, text=True).stdout.strip()
+        changes = [l for l in raw.splitlines() if not l[3:].startswith("results/")]
         return out.stdout.strip() + ("-dirty" if dirty else "")
+
     except Exception:
         return "unknown"
 

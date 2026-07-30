@@ -23,7 +23,7 @@ class GreedyAgent:
         scored = []
         for turn, next_state in survivable:
             h, _raw, blobs = self.sim._heuristic_detail(next_state)
-            scored.append((self.i_score(h, blobs), turn))
+            scored.append((self._score(h, blobs), turn))
 
         best = min(s for s, _ in scored)
         return self.rng.choice([t for s, t in scored if s == best])

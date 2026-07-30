@@ -1,4 +1,10 @@
 import json, subprocess, time
+import argparse, json
+from agent.play import play_episode
+from agents.greedy_agent import GreedyAgent
+from agents.random_agent import RandomAgent
+from game.levels import make_sim
+
 from collections import Counter
 from pathlib import Path
 
@@ -44,4 +50,28 @@ def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes
     with RESULTS.open("a") as f:
         f.write(json.dumps(record) + "\n")
     return record
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--agent", choices=["random", "greedy", "llm"], default="greedy")
+    ap.add_argument("--key", choices=["h_first", "blobs_first"], default="h_first")
+    ap.add_argument("--level", default="level_3")
+    ap.add_argument("--episodes", type=int, default=1000)
+    ap.add_argument("--seed-start", type=int, default=0)
+    ap.add_argument("--notes", default="")
+    args = ap.parse_args()
+
+    sim = make_sim(args.level)
+
+    def factory(seed):
+        if args.agent == "random":
+            return RandomAgent(seed=seed)
+        if args.agent == "greedy":
+            return GreedyAgent(sim, seed=seed, key=args.key)
+        #return LLMAgent()
+
+    record = run_experiment(factory, sim, args.level, args.episodes,
+                            args.seed_start, args.notes)
+
+    print(json.dumps(record, indent=2))
 

@@ -21,6 +21,18 @@ DIR_CODE = {
     Direction.LEFT: "L", Direction.RIGHT: "R",
 }
 
+HARVEST_OPTIONS = (None, Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT)
+
+def legal_turns(sim, state) -> list[Turn]:
+    out = []
+    for h in HARVEST_OPTIONS:
+        for m in Direction:
+            hc = DIR_CODE[h] if h else None
+            if _illegal_reason(sim, state, hc, DIR_CODE[m]) is None:
+                out.append(Turn(reasoning="", harvest=h, move=m))
+    return out
+
+
 def _pos(t: tuple[int,int]) -> Position:
     return Position(x=t[0], y=t[1])
 

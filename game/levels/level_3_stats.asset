@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b1b13a3073d18340857a41e1577b5e2, type: 3}
+  m_Name: level_4_stats
+  m_EditorClassIdentifier: 
+  level_number_auto_loaded: 4
+  number_of_preys: 1
+  number_of_predators: 0
+  predator_generation_frequency: 0
+  predators_generated: 0
+  plant_seed_type: 0
+  n_colors: 4
+  minimum_spawn_turn: 0
+  turn_limit: 9
+  star_1_threshold: 9
+  star_2_threshold: 6
+  star_3_threshold: 3
+  stored_plant_seed_type_color: 4
+  level_name: Tutorial_Level_3.csv
+  level_to_load: Iphone_Portrait_Level
+  prey_spawn_position: {x: 3, y: 0}
+  level_center: {x: 0, y: 0}
+  controlled_movements_lists: []
+  conditions: []

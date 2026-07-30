@@ -1,7 +1,13 @@
+import argparse
+from collections import Counter
+
+from game.levels import LEVELS, make_sim
 from game.level_solver import build_level, Sim, DEFAULT_LEVEL, DEFAULT_STATS
-from interface.adapter import Outcome, step, to_game_state, to_solver
-from interface.serialize import to_prompt
-from agent.llm_agent import LLMAgent
+from interface.adapter import Outcome, step, to_game_state, to_solver, legal_turns
+from interface.serializer import to_prompt
+#from agent.llm_agent import LLMAgent
+from agent.random_agent import RandomAgent
+
 
 MAX_RETRIES = 3
 def play_episode(agent, sim, verbose=True):
@@ -9,11 +15,14 @@ def play_episode(agent, sim, verbose=True):
     history = []
 
     while state.turn < sim.level.turn_limit:
-        board = to_prompt(to_game_state(sim, state))
+        gs = to_game_state(sim, state)
+        legal = legal_turns(sim, state)
+        if not legal:
+            return "TRAPPED", history
+        
         error = None
-
         for _ in range(MAX_RETRIES):
-            turn = agent.choose_turn(board, error)
+            turn = agent.choose_turn(gs,legal, error)
             harvest_code, move_code = to_solver(turn)
             outcome, new_state, msg = step(sim, state, harvest_code, move_code)
             if outcome is not Outcome.ILLEGAL:
@@ -25,16 +34,42 @@ def play_episode(agent, sim, verbose=True):
         history.append((turn, outcome))
         if verbose:
             print(f"T{state.turn}: harvest={turn.harvest} move={turn.move} -> {outcome.value}")
-            print(f"    {turn.reasoning}")
+            if turn.reasoning:
+                print(f"    {turn.reasoning}")
 
         if outcome in (Outcome.WIN, Outcome.DEATH):
             return outcome.value.upper(), history
         state = new_state
 
-     return "TIMEOUT", history
+    return "TIMEOUT", history
 
- if __name__ == "__main__":
-     level = build_level(DEFAULT_LEVEL, DEFAULT_STATS)
-     sim = Sim(level, max_turn=level.turn_limit)
-     result, history = play_episode(LLMAgent(), sim)
-     print(f"\nResult: {result} in {len(history)} turns")
+def make_agent(kind, seed):
+    if kind == "random":
+        return RandomAgent(seed=seed)
+    #return LLMAgent()
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--agent", choices=["random", "llm"], default="random")
+    ap.add_argument("--level", default="level_3", choices=[*LEVELS])
+    ap.add_argument("--episodes", type=int, default=1)
+    ap.add_argument("--seed", type=int, default=0)
+    args = ap.parse_args()
+    
+
+    level = build_level(DEFAULT_LEVEL, DEFAULT_STATS)
+    sim = make_sim(args.level)
+
+    if args.episodes == 1:
+        result, history = play_episode(make_agent(args.agent, args.seed), sim)
+        print(f"\nResult: {result} in {len(history)} turns")
+    else:
+        results = Counter()
+        for i in range(args.episodes):
+            result, history = play_episode(make_agent(args.agent, args.seed + i), sim, verbose=False)
+            results[result] += 1
+        total = sum(results.values())
+        print(f"{args.agent} over {total} episodes:")
+        for outcome, n in results.most_common():
+            print(f"  {outcome:8} {n:4}  ({n / total:.0%})")

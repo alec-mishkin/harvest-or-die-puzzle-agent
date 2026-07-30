@@ -20,8 +20,8 @@ class LLMAgent:
         self.model = model
         self.client = client or Anthropic()
 
-    def choose_turn(self, board: str, error: str | None = None) -> Turn:
-        content = board
+    def choose_turn(self, gs: GameState, legal: list[Turn], error: str | None) -> Turn:
+        content = to_prompt(gs)
         if error:
             content += f"\n\nYour previous choice was rejected: {error}\nChoose a different, legal move."
         response = self.client.messages.parse(

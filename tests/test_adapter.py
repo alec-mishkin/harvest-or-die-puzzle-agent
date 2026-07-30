@@ -1,6 +1,7 @@
 import pytest
+from pydantic import field_validator
 from game.level_solver import build_level, Sim, DEFAULT_LEVEL, DEFAULT_STATS
-from interface.adapter import to_game_state, Outcome, step, to_solver
+from interface.adapter import to_game_state, Outcome, step, to_solver, legal_turns
 
 from interface.state import Color, Position, TileType
 from interface.action import Direction, Turn
@@ -77,4 +78,11 @@ def test_ongoing_turn_advances_state(sim_and_state):
     if outcome is Outcome.ONGOING:
         assert new_state.turn == state.turn + 1
         assert new_state is not state
+
+def test_legal_turns_at_start(sim_and_state):
+    sim, state = sim_and_state
+    turns = legal_turns(sim, state)
+    assert len(turns) == 12 # 4 harvests x 3 moves
+    assert all(t.move is not Direction.LEFT for t in turns)   # wall at (0,1)
+    assert all(t.harvest is not Direction.LEFT for t in turns) 
 

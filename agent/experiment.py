@@ -1,8 +1,8 @@
 import json, subprocess, time
 import argparse, json
 from agent.play import play_episode
-from agents.greedy_agent import GreedyAgent
-from agents.random_agent import RandomAgent
+from agent.greedy_agent import GreedyAgent
+from agent.random_agent import RandomAgent
 from game.levels import make_sim
 
 from collections import Counter

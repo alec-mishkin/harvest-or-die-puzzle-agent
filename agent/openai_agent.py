@@ -25,7 +25,6 @@ class OpenAIAgent:
             raise RuntimeError(f"hit call cap ({self.max_calls})")
         
         content = to_prompt(gs)
-        print(content)
         if error:
             content += f"\n\nYour previous choice was rejected: {error}\nChoose a different, legal move."
 

@@ -3,6 +3,7 @@ import argparse, json
 from agent.play import play_episode
 from agent.greedy_agent import GreedyAgent
 from agent.random_agent import RandomAgent
+from agent.openai_agent import OpenAIAgent
 from game.levels import make_sim
 
 from collections import Counter
@@ -12,12 +13,12 @@ RESULTS = Path("results/runs.jsonl")
 
 def git_sha():
     try:
-        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
-                             capture_output=True, text=True, check=True)
-        dirty = subprocess.run(["git", "status", "--porcelain"],
-                               capture_output=True, text=True).stdout.strip()
+        sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                             capture_output=True, text=True, check=True).stdout.strip()
+        raw = subprocess.run(["git", "status", "--porcelain"],
+                             capture_output=True, text=True).stdout
         changes = [l for l in raw.splitlines() if not l[3:].startswith("results/")]
-        return out.stdout.strip() + ("-dirty" if dirty else "")
+        return sha + ("-dirty" if changes else "")
 
     except Exception:
         return "unknown"
@@ -55,7 +56,7 @@ def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--agent", choices=["random", "greedy", "llm"], default="greedy")
+    ap.add_argument("--agent", choices=["random", "greedy", "openai"], default="greedy")
     ap.add_argument("--key", choices=["h_first", "blobs_first"], default="h_first")
     ap.add_argument("--level", default="level_3")
     ap.add_argument("--episodes", type=int, default=1000)
@@ -70,7 +71,8 @@ if __name__ == "__main__":
             return RandomAgent(seed=seed)
         if args.agent == "greedy":
             return GreedyAgent(sim, seed=seed, key=args.key)
-        #return LLMAgent()
+        if args.agent == "openai":
+            return OpenAIAgent(model="gpt-5.6-luna")
 
     record = run_experiment(factory, sim, args.level, args.episodes,
                             args.seed_start, args.notes)

@@ -2,10 +2,9 @@ import argparse
 from collections import Counter
 
 from game.levels import LEVELS, make_sim
-from game.level_solver import build_level, Sim, DEFAULT_LEVEL, DEFAULT_STATS
+from game.level_solver import build_level, Sim
 from interface.adapter import Outcome, step, to_game_state, to_solver, legal_turns
 from interface.serializer import to_prompt
-#from agent.llm_agent import LLMAgent
 from agent.random_agent import RandomAgent
 from agent.greedy_agent import GreedyAgent
 from agent.openai_agent import OpenAIAgent
@@ -66,7 +65,7 @@ def make_agent(kind, seed,sim):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--agent", choices=["random", "greedy", "llm", "openai"], default="random")
+    ap.add_argument("--agent", choices=["random", "greedy", "openai"], default="random")
     ap.add_argument("--level", default="level_3", choices=[*LEVELS])
     ap.add_argument("--episodes", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)

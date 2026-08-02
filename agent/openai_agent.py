@@ -1,15 +1,15 @@
-import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from interface.action import Turn
-from interface.serialize import to_prompt
+from interface.serializer import to_prompt
+from agent.prompts import SYSTEM_V1
 
 load_dotenv()
 
-SYSTEM = """..."""   # same system prompt
+SYSTEM = SYSTEM_V1   # same system prompt
 
 class OpenAIAgent:
-    def __init__(self, model="gpt-5.6", max_calls=200):
+    def __init__(self, model="gpt-5.6-luna", max_calls=200):
         self.model = model
         self.client = OpenAI()          # reads OPENAI_API_KEY from env
         self.max_calls = max_calls
@@ -29,7 +29,7 @@ class OpenAIAgent:
             content += f"\n\nYour previous choice was rejected: {error}\nChoose a different, legal move."
 
         response = self.client.responses.parse(
-            model=self.model
+            model=self.model,
             input=[
                 {"role": "system", "content": SYSTEM},
                 {"role": "user", "content": content},

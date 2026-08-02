@@ -8,6 +8,7 @@ from interface.serializer import to_prompt
 #from agent.llm_agent import LLMAgent
 from agent.random_agent import RandomAgent
 from agent.greedy_agent import GreedyAgent
+from agent.openai_agent import OpenAIAgent
 
 
 MAX_RETRIES = 3
@@ -52,18 +53,20 @@ def play_episode(agent, sim, verbose=True):
 
     return "TIMEOUT", history
 
-def make_agent(kind, seed):
+def make_agent(kind, seed,sim):
     if kind == "random":
         return RandomAgent(seed=seed)
     if kind == "greedy":
         return GreedyAgent(sim, seed=seed)
+    if kind == "openai":
+        return OpenAIAgent(model="gpt-5.6-luna")
 
     #return LLMAgent()
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--agent", choices=["random", "greedy", "llm"], default="random")
+    ap.add_argument("--agent", choices=["random", "greedy", "llm", "openai"], default="random")
     ap.add_argument("--level", default="level_3", choices=[*LEVELS])
     ap.add_argument("--episodes", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)
@@ -74,12 +77,12 @@ if __name__ == "__main__":
     sim = make_sim(args.level)
 
     if args.episodes == 1:
-        result, history = play_episode(make_agent(args.agent, args.seed), sim)
+        result, history = play_episode(make_agent(args.agent, args.seed,sim), sim)
         print(f"\nResult: {result} in {len(history)} turns")
     else:
         results = Counter()
         for i in range(args.episodes):
-            result, history = play_episode(make_agent(args.agent, args.seed + i), sim, verbose=False)
+            result, history = play_episode(make_agent(args.agent, args.seed + i,sim), sim, verbose=False)
             results[result] += 1
         total = sum(results.values())
         print(f"{args.agent} over {total} episodes:")

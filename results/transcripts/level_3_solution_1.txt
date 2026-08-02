@@ -1,0 +1,184 @@
+Turn 0/9  (9 moves left)
+Held seed: NONE  (harvested plants regrow this color)
+You are at (3,0) standing on: a yellow plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 10 yellow, 10 blue
+
+ 4 # # # # # #
+ 3 Y Y B Y Y #
+ 2 B B Y B B #
+ 1 B B Y B B #
+ 0 Y Y B @ Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+Turn 0/9  (9 moves left)
+Held seed: NONE  (harvested plants regrow this color)
+You are at (3,0) standing on: a yellow plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 10 yellow, 10 blue
+
+ 4 # # # # # #
+ 3 Y Y B Y Y #
+ 2 B B Y B B #
+ 1 B B Y B B #
+ 0 Y Y B @ Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+T0: harvest=left move=up -> ongoing
+    I’ll hold blue by harvesting the adjacent blue tile, then move upward to escape the resulting hole and begin repainting yellow regions blue.
+Turn 1/9  (8 moves left)
+Held seed: BLUE  (harvested plants regrow this color)
+You are at (3,1) standing on: a blue plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 10 yellow, 9 blue, 1 hole
+
+ 4 # # # # # #
+ 3 Y Y B Y Y #
+ 2 B B Y B B #
+ 1 B B Y @ B #
+ 0 Y Y b Y Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+- hole at (2,0) regrows in 1 turn as a BLUE plant
+T1: harvest=None move=left -> ongoing
+    Move left toward the two yellow regions on the west side, staying off the central yellow cluster until I can harvest it safely.
+Turn 2/9  (7 moves left)
+Held seed: BLUE  (harvested plants regrow this color)
+You are at (2,1) standing on: a yellow plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 10 yellow, 10 blue
+
+ 4 # # # # # #
+ 3 Y Y B Y Y #
+ 2 B B Y B B #
+ 1 B B @ B B #
+ 0 Y Y B Y Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+T2: harvest=None move=down -> ongoing
+    Move to the lower center so I can safely repaint the bottom-left yellow region on the next turn, then use the yellow seed to convert the blue regions.
+Turn 3/9  (6 moves left)
+Held seed: BLUE  (harvested plants regrow this color)
+You are at (2,0) standing on: a blue plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 10 yellow, 10 blue
+
+ 4 # # # # # #
+ 3 Y Y B Y Y #
+ 2 B B Y B B #
+ 1 B B Y B B #
+ 0 Y Y @ Y Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+T3: harvest=up move=left -> ongoing
+    Start by repainting the connected central yellow pair blue, then move toward the left side while avoiding the newly created holes.
+Turn 4/9  (5 moves left)
+Held seed: YELLOW  (harvested plants regrow this color)
+You are at (1,0) standing on: a yellow plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 10 blue, 8 yellow, 2 hole
+
+ 4 # # # # # #
+ 3 Y Y B Y Y #
+ 2 B B b B B #
+ 1 B B b B B #
+ 0 Y @ B Y Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+- hole at (2,1) regrows in 1 turn as a BLUE plant
+- hole at (2,2) regrows in 1 turn as a BLUE plant
+T4: harvest=None move=left -> ongoing
+    Reposition to the safe yellow corner first, then harvest the connected blue region from a safe adjacent tile without stepping onto the resulting holes.
+Turn 5/9  (4 moves left)
+Held seed: YELLOW  (harvested plants regrow this color)
+You are at (0,0) standing on: a yellow plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 12 blue, 8 yellow
+
+ 4 # # # # # #
+ 3 Y Y B Y Y #
+ 2 B B B B B #
+ 1 B B B B B #
+ 0 @ Y B Y Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+T5: harvest=None move=right -> ongoing
+    Move beside the connected blue region, then harvest it while holding yellow to repaint all blue tiles yellow. I’ll avoid stepping into the holes created by the harvest.
+Turn 6/9  (3 moves left)
+Held seed: YELLOW  (harvested plants regrow this color)
+You are at (1,0) standing on: a yellow plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 12 blue, 8 yellow
+
+ 4 # # # # # #
+ 3 Y Y B Y Y #
+ 2 B B B B B #
+ 1 B B B B B #
+ 0 Y @ B Y Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+T6: harvest=right move=left -> ongoing
+    Harvest the connected blue region while holding yellow so all its holes regrow yellow. Then step left onto the remaining yellow plant, avoiding the newly created holes.
+Turn 7/9  (2 moves left)
+Held seed: NONE  (harvested plants regrow this color)
+You are at (0,0) standing on: a yellow plant
+
+Goal: every scoring tile the same color, and no holes.
+Currently: 12 hole, 8 yellow
+
+ 4 # # # # # #
+ 3 Y Y y Y Y #
+ 2 y y y y y #
+ 1 y y y y y #
+ 0 @ Y y Y Y #
+   0 1 2 3 4 5
+
+Legend: @ you | X predator | R/B/Y/P plants | r/b/y/p holes (lowercase = regrow color)
+        # wall | s spawn | * bush | o hole with no color
+Coordinates: x increases right, y increases UP (so 'up' moves toward the top row).
+- hole at (2,0) regrows in 1 turn as a YELLOW plant
+- hole at (0,1) regrows in 1 turn as a YELLOW plant
+- hole at (1,1) regrows in 1 turn as a YELLOW plant
+- hole at (2,1) regrows in 1 turn as a YELLOW plant
+- hole at (3,1) regrows in 1 turn as a YELLOW plant
+- hole at (4,1) regrows in 1 turn as a YELLOW plant
+- hole at (0,2) regrows in 1 turn as a YELLOW plant
+- hole at (1,2) regrows in 1 turn as a YELLOW plant
+- hole at (2,2) regrows in 1 turn as a YELLOW plant
+- hole at (3,2) regrows in 1 turn as a YELLOW plant
+- hole at (4,2) regrows in 1 turn as a YELLOW plant
+- hole at (2,3) regrows in 1 turn as a YELLOW plant
+T7: harvest=None move=right -> win
+    All holes are already queued to regrow yellow, so avoid harvesting and simply move onto the safe yellow tile while the board completes its regrowth.

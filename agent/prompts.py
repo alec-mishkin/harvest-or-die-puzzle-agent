@@ -12,7 +12,7 @@ Each turn resolves in this fixed order:
 
     ## Harvesting
 
-    Harvesting a plant removes it and every connected plant of the same color (a flood fill through orthogonal neighbors), leaving holes where they were. Your held seed then becomes the color you just harvested. Each hole regrows after a few turns as a plant of the color you were holding at the moment you harvested it.
+    Harvesting a plant removes it and every connected plant of the same color (a flood fill through orthogonal neighbors), leaving holes where they were. Your held seed then becomes the color you just harvested. Each hole regrows after a few turns as a plant of the color you were holding at the moment you harvested it. 
 
     So the seed you hold when you harvest determines what grows back. This is the core mechanic: you are repainting regions of the board by choosing what to hold and what to cut.
 
@@ -22,6 +22,7 @@ Each turn resolves in this fixed order:
 
     You lose if:
     - You step onto a hole.
+    - If a hole appears on your spot because of a harvest
     - A predator moves onto you, or you move onto a predator.
     - You harvest in a way that opens a hole underneath yourself.
     - You run out of turns without meeting the win condition.
@@ -39,3 +40,5 @@ Each turn resolves in this fixed order:
     Give brief reasoning (one or two sentences on your plan), then commit to a harvest direction (or none) and a move direction. Both must be one of: up, down, left, right.
 
     Think about what color you are converging toward, and prefer moves that make progress toward uniformity rather than wandering. If a move would kill you, do not make it."""
+
+

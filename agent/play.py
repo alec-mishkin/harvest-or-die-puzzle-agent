@@ -1,4 +1,4 @@
-import argparse
+import argparse, time
 from collections import Counter
 
 from game.levels import LEVELS, make_sim
@@ -11,15 +11,13 @@ from agent.openai_agent import OpenAIAgent
 
 
 MAX_RETRIES = 3
-def play_episode(agent, sim, verbose=True):
+def play_episode(agent, sim, verbose=True, on_turn = None):
     state = sim.initial_state()
     history = []
 
     while state.turn < sim.level.turn_limit:
         gs = to_game_state(sim, state)
-        #legal = legal_turns(sim, state)
-        #if not legal:
-        #    return "TRAPPED", history
+        board = to_prompt(gs)
         
         candidates = []
         for turn in legal_turns(sim, state):
@@ -29,9 +27,12 @@ def play_episode(agent, sim, verbose=True):
         if not candidates:
             return "TRAPPED", history
 
-        error = None
+        error, attempts = None, 0
         for _ in range(MAX_RETRIES):
+            t0 = time.perf_counter()
             turn = agent.choose_turn(gs,candidates, error)
+            latency = time.perf_counter() - t0
+            attempts += 1
             harvest_code, move_code = to_solver(turn)
             outcome, new_state, msg = step(sim, state, harvest_code, move_code)
             if outcome is not Outcome.ILLEGAL:
@@ -39,6 +40,18 @@ def play_episode(agent, sim, verbose=True):
             error = msg
         else:
             return "FORFEIT", history
+        if on_turn:
+            on_turn({
+                "turn": state.turn,
+                "board": board,
+                "reasoning": turn.reasoning,
+                "harvest": turn.harvest.value if turn.harvest else None,
+                "move": turn.move.value,
+                "outcome": outcome.value,
+                "attempts": attempts,
+                "latency_s": round(latency, 2),
+                "n_candidates": len(candidates),
+            })
 
         history.append((turn, outcome))
         if verbose:

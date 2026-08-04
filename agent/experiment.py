@@ -87,6 +87,7 @@ if __name__ == "__main__":
     ap.add_argument("--seed-start", type=int, default=0)
     ap.add_argument("--notes", default="")
     ap.add_argument("--transcripts", action="store_true")
+    ap.add_argument("--show-fatal", action="store_true")
     args = ap.parse_args()
 
     sim = make_sim(args.level)
@@ -97,8 +98,8 @@ if __name__ == "__main__":
         if args.agent == "greedy":
             return GreedyAgent(sim, seed=seed, key=args.key)
         if args.agent == "openai":
-            return OpenAIAgent(model="gpt-5.6-luna")
-
+             return OpenAIAgent(model="gpt-5.6-luna", show_fatal=args.show_fatal)
+    
     record = run_experiment(factory, sim, args.level, args.episodes,
                             args.seed_start, args.notes, args.transcripts)
 

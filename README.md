@@ -3,7 +3,7 @@
 An LLM Agent that plays **Harvest or Die**, a turn-based grid puzzle game I built in Unity.
 
 In the game you play as the bunny and your goal is to make all fruit the same color. To do that, you harvest a fruit which gives you a colored seed. 
-![Start of Level 3](docs/images/Level_3 Image 1.PNG) ![Harvesting one plant on Level 3](docs/images/Level_3 Image 2.PNG)
+![Start of Level 3]("docs/images/Level_3 Image 1.PNG") ![Harvesting one plant on Level 3]("docs/images/Level_3 Image 2.PNG")
 
 
 

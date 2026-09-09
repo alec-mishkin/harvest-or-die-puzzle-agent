@@ -12,6 +12,15 @@ In the game you play as the bunny and your goal is to make all fruit the same co
 
 The point of this project is not only to get a language model to play the game, but the measurement apparatus around it. There is a validated simulator, a reproducible eval harness, deterministic baselines, and controlled ablations to isolate *why* the agent fails.
 
+Four different methodologies are compared here.
+
+Random: The bunny makes random legal moves
+
+Greedy: The agent simulates every legal move one step ahead, discards any that would kill it, and picks whichever leaves the board closest to a win by the solver's distance estimate.
+
+LLM, Board Only: The model sees just the rendered board and status text, so it must work out for itself whether a move is lethal.
+
+LLM + fatal-move annotation: The same prompt plus an explicit list of which legal moves would kill it this turn, computed by the simulator and handed over rather than inferred
 ---
 
 ## Headline result

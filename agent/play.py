@@ -26,6 +26,9 @@ def play_episode(agent, sim, verbose=True, on_turn = None):
             candidates.append((turn, result[1] if result else None))   # None = fatal
         if not candidates:
             return "TRAPPED", history
+        survivable = [c for c in candidates if c[1] is not None]
+        if not survivable:
+            return "CORNERED", history
 
         error, attempts = None, 0
         for _ in range(MAX_RETRIES):

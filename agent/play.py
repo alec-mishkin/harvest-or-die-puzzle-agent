@@ -9,8 +9,8 @@ from agent.random_agent import RandomAgent
 from agent.greedy_agent import GreedyAgent
 from agent.openai_agent import OpenAIAgent
 
-
 MAX_RETRIES = 3
+
 def play_episode(agent, sim, verbose=True, on_turn = None):
     state = sim.initial_state()
     history = []
@@ -47,6 +47,7 @@ def play_episode(agent, sim, verbose=True, on_turn = None):
             on_turn({
                 "turn": state.turn,
                 "board": board,
+                "prompt": getattr(agent, "last_prompt", board),
                 "reasoning": turn.reasoning,
                 "harvest": turn.harvest.value if turn.harvest else None,
                 "move": turn.move.value,

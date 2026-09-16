@@ -1,4 +1,5 @@
 # Harvest or Die LLM Puzzle Agent
+![tests](https://github.com/alec-mishkin/harvest-or-die-puzzle-agent/actions/workflows/tests.yml/badge.svg)
 
 An LLM Agent that plays **Harvest or Die**, a turn-based grid puzzle game I built in Unity.
 

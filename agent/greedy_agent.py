@@ -8,6 +8,8 @@ class GreedyAgent:
         self.sim = sim
         self.rng = random.Random(seed)
         self.key = key
+        self.last_prompt = None
+        self.input_tokens = 0
 
     def _score(self, h, blobs):
         return (h, blobs) if self.key == "h_first" else (blobs, h)

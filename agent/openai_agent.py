@@ -33,7 +33,6 @@ class OpenAIAgent:
             raise RuntimeError(f"hit call cap ({self.max_calls})")
         
         content = to_prompt(gs)
-        self.last_prompt = content        # after all annotations are appended
 
         if self.show_fatal:
             fatal = [t for t, s in candidates if s is None]
@@ -43,7 +42,8 @@ class OpenAIAgent:
 
         if error:
             content += f"\n\nYour previous choice was rejected: {error}\nChoose a different, legal move."
-
+        
+        self.last_prompt = content        # after all annotations are appended
         response = self.client.responses.parse(
             model=self.model,
             input=[

@@ -10,7 +10,10 @@ from game.levels import make_sim
 from collections import Counter
 from pathlib import Path
 
-RESULTS = Path("results/runs.jsonl")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+RESULTS = REPO_ROOT / "results" / "runs.jsonl"
+TRANSCRIPT_ROOT = REPO_ROOT / "results" / "transcripts"
+
 
 def git_sha():
     try:
@@ -26,7 +29,7 @@ def git_sha():
 
 def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes="",transcripts=False):
     run_id = time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:4]
-    tdir = Path("results/transcripts") / run_id
+    tdir = TRANSCRIPT_ROOT / run_id 
     outcomes, turns, win_turns, episode_results = Counter(), [], [], []
     in_tok = out_tok = 0
 
@@ -52,8 +55,8 @@ def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes
         turns.append(len(history))
         if result == "WIN":
             win_turns.append(len(history))
-        in_tok += getattr(agent, "input_tokens", 0)
-        out_tok += getattr(agent, "output_tokens", 0)
+        in_tok += agent.input_tokens
+        out_tok += agent.output_tokens
 
     record = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),

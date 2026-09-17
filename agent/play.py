@@ -47,7 +47,7 @@ def play_episode(agent, sim, verbose=True, on_turn = None):
             on_turn({
                 "turn": state.turn,
                 "board": board,
-                "prompt": getattr(agent, "last_prompt", board),
+                "prompt": agent.last_prompt,
                 "reasoning": turn.reasoning,
                 "harvest": turn.harvest.value if turn.harvest else None,
                 "move": turn.move.value,

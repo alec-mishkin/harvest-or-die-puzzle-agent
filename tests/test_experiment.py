@@ -1,6 +1,6 @@
 from game.levels import make_sim
-from agents.random_agent import RandomAgent
-from agents.greedy_agent import GreedyAgent
+from agent.random_agent import RandomAgent
+from agent.greedy_agent import GreedyAgent
 def test_run_experiment_writes_a_record(tmp_path, monkeypatch):
     import agent.experiment as exp
     monkeypatch.setattr(exp, "RESULTS", tmp_path / "runs.jsonl")

@@ -1,5 +1,7 @@
 from game.levels import make_sim
 from agent.play import play_episode
+from agents.random_agent import RandomAgent
+from agents.greedy_agent import GreedyAgent
 def test_random_agent_runs_a_full_episode():
     sim = make_sim("level_3")
     result, history = play_episode(RandomAgent(seed=0), sim, verbose=False)

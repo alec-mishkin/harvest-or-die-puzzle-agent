@@ -10,6 +10,7 @@ class RandomAgent:
         self.rng = random.Random(seed)
         self.last_prompt = None
         self.input_tokens = 0
+        self.output_tokens = 0
 
     def choose_turn(self, gs: GameState, candidates: list[tuple[Turn, State | None]], error: str | None = None) -> Turn:
         turn, _next_state = self.rng.choice(candidates)

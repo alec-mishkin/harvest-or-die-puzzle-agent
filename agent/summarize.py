@@ -3,9 +3,13 @@ from pathlib import Path
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--notes", action="store_true", help="show the notes field")
+ap.add_argument("--clean", action="store_true",help="only show runs from a clean commit")
+
 args = ap.parse_args()
 
 rows = [json.loads(l) for l in Path("results/runs.jsonl").read_text().splitlines() if l.strip()]
+if args.clean:
+    rows = [r for r in rows if "-dirty" not in r.get("git_sha", "")]
 
 hdr = f"{'run_id':22} {'agent':14} {'level':9} {'config':38} {'n':>5} {'win%':>6} {'death%':>7} {'cornered%':>7} {'turns':>6}"
 if args.notes:

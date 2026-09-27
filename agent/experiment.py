@@ -7,6 +7,8 @@ from agent.random_agent import RandomAgent
 from agent.openai_agent import OpenAIAgent
 from game.levels import make_sim
 
+
+from concurrent.futures import ThreadPoolExecutor
 from collections import Counter
 from pathlib import Path
 
@@ -27,29 +29,36 @@ def git_sha():
     except Exception:
         return "unknown"
 
-def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes="",transcripts=False):
+def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes="",transcripts=False, workers=1):
     run_id = time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:4]
     tdir = TRANSCRIPT_ROOT / run_id 
+    if transcripts:
+        tdir.mkdir(parents=True, exist_ok=True)
+
     outcomes, turns, win_turns, episode_results = Counter(), [], [], []
     in_tok = out_tok = 0
-
-    for i in range(episodes):
+    def run_one(i): 
         agent = make_agent_fn(seed_start + i)
-        f = None
-        if transcripts:
-            tdir.mkdir(parents=True, exist_ok=True)
-            f = (tdir / f"ep{i:03d}.jsonl").open("w")
+        f = (tdir / f"ep{i:03d}.jsonl").open("w") if transcripts else None
 
         def on_turn(rec, _f=f):
             if _f:
                 _f.write(json.dumps(rec) + "\n")
-                _f.flush() 
+                _f.flush()
         try:
             result, history = play_episode(agent, sim, verbose=False, on_turn=on_turn)
         finally:
             if f:
                 f.close()
+        print(f"  ep{i:03d}: {result}", flush=True)
+        return i, result, len(history), agent.input_tokens, agent.output_tokens
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        results = list(ex.map(run_one, range(episodes)))
 
+    results.sort()          # ex.map preserves order, but be explicit
+    outcomes, turns, win_turns, episode_results = Counter(), [], [], []
+    in_tok = out_tok = 0
+    for _i, result, n_turns, i_tok, o_tok in results:
         outcomes[result] += 1
         episode_results.append(result)
         turns.append(len(history))
@@ -58,28 +67,28 @@ def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes
         in_tok += agent.input_tokens
         out_tok += agent.output_tokens
 
-    record = {
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "git_sha": git_sha(),
-        "agent": type(agent).__name__,
-        "agent_config": getattr(agent, "config", lambda: {})(),
-        "level": level_name,
-        "episodes": episodes,
-        "seed_start": seed_start,
-        "outcomes": dict(outcomes),
-        "win_rate": outcomes["WIN"] / episodes,
-        "mean_turns": sum(turns) / len(turns),
-        "mean_win_turns": sum(win_turns) / len(win_turns) if win_turns else None,
-        "notes": notes,
-        "run_id": run_id,
-        "episode_results": episode_results,
-        "transcripts": str(tdir) if transcripts else None,
-    }
+        record = {
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "git_sha": git_sha(),
+            "agent": type(agent).__name__,
+            "agent_config": getattr(agent, "config", lambda: {})(),
+            "level": level_name,
+            "episodes": episodes,
+            "seed_start": seed_start,
+            "outcomes": dict(outcomes),
+            "win_rate": outcomes["WIN"] / episodes,
+            "mean_turns": sum(turns) / len(turns),
+            "mean_win_turns": sum(win_turns) / len(win_turns) if win_turns else None,
+            "notes": notes,
+            "run_id": run_id,
+            "episode_results": episode_results,
+            "transcripts": str(tdir) if transcripts else None,
+        }
 
-    RESULTS.parent.mkdir(exist_ok=True)
-    with RESULTS.open("a") as f:
-        f.write(json.dumps(record) + "\n")
-    return record
+        RESULTS.parent.mkdir(exist_ok=True)
+        with RESULTS.open("a") as f:
+            f.write(json.dumps(record) + "\n")
+        return record
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -91,6 +100,7 @@ if __name__ == "__main__":
     ap.add_argument("--notes", default="")
     ap.add_argument("--transcripts", action="store_true")
     ap.add_argument("--show-fatal", action="store_true")
+    ap.add_argument("--workers", type=int, default=1)
     args = ap.parse_args()
 
     sim = make_sim(args.level)

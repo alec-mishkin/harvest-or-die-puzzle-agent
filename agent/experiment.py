@@ -52,6 +52,7 @@ def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes
                 f.close()
         print(f"  ep{i:03d}: {result}", flush=True)
         return i, result, len(history), agent.input_tokens, agent.output_tokens
+    meta_agent = make_agent_fn(seed_start)     # for config/type only; makes no API call
     with ThreadPoolExecutor(max_workers=workers) as ex:
         results = list(ex.map(run_one, range(episodes)))
 
@@ -61,17 +62,17 @@ def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes
     for _i, result, n_turns, i_tok, o_tok in results:
         outcomes[result] += 1
         episode_results.append(result)
-        turns.append(len(history))
+        turns.append(n_turns)
         if result == "WIN":
-            win_turns.append(len(history))
-        in_tok += agent.input_tokens
-        out_tok += agent.output_tokens
+            win_turns.append(n_turns)
+        in_tok += i_tok
+        out_tok += o_tok
 
         record = {
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
             "git_sha": git_sha(),
-            "agent": type(agent).__name__,
-            "agent_config": getattr(agent, "config", lambda: {})(),
+            "agent": type(meta_agent).__name__,
+            "agent_config": meta_agent.config() if hasattr(meta_agent, "config") else {},
             "level": level_name,
             "episodes": episodes,
             "seed_start": seed_start,

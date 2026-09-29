@@ -68,28 +68,30 @@ def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes
         in_tok += i_tok
         out_tok += o_tok
 
-        record = {
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
-            "git_sha": git_sha(),
-            "agent": type(meta_agent).__name__,
-            "agent_config": meta_agent.config() if hasattr(meta_agent, "config") else {},
-            "level": level_name,
-            "episodes": episodes,
-            "seed_start": seed_start,
-            "outcomes": dict(outcomes),
-            "win_rate": outcomes["WIN"] / episodes,
-            "mean_turns": sum(turns) / len(turns),
-            "mean_win_turns": sum(win_turns) / len(win_turns) if win_turns else None,
-            "notes": notes,
-            "run_id": run_id,
-            "episode_results": episode_results,
-            "transcripts": str(tdir) if transcripts else None,
-        }
+    record = {
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "git_sha": git_sha(),
+        "agent": type(meta_agent).__name__,
+        "agent_config": meta_agent.config() if hasattr(meta_agent, "config") else {},
+        "level": level_name,
+        "episodes": episodes,
+        "seed_start": seed_start,
+        "outcomes": dict(outcomes),
+        "win_rate": outcomes["WIN"] / episodes,
+        "mean_turns": sum(turns) / len(turns),
+        "mean_win_turns": sum(win_turns) / len(win_turns) if win_turns else None,
+        "notes": notes,
+        "run_id": run_id,
+        "episode_results": episode_results,
+        "input_tokens":i_tok,
+        "output_tokens":o_tok,
+        "transcripts": str(tdir) if transcripts else None,
+    }
 
-        RESULTS.parent.mkdir(exist_ok=True)
-        with RESULTS.open("a") as f:
-            f.write(json.dumps(record) + "\n")
-        return record
+    RESULTS.parent.mkdir(exist_ok=True)
+    with RESULTS.open("a") as f:
+        f.write(json.dumps(record) + "\n")
+    return record
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

@@ -53,7 +53,8 @@ When the LLM is given an explicit list of deadly moves then the LLM beats Greedy
 
 LLM rows pooled across runs; n is small because each episode is up to 28 sequential API calls.
 
-Level 14 introduces enemeys slimes so 'Cornered' was included as a final state for an agent. This occurs when the agent is cornered by enemy slimes and there is no where safe for it to go/.
+Level 14 introduces enemeys slimes so 'Cornered' was included as a final state for an agent. This occurs when the agent is cornered by enemy slimes and there is no where safe for it to go.
 
 Here only the LLM agent with the explicit list of deadly moves wins at all. The LLM agent without the explicit list of dead moves survives longer than the greedy agent with an average turn count of 22.3 compared to 17.7
+
 --- 

@@ -22,6 +22,7 @@ Greedy: The agent simulates every legal move one step ahead, discards any that w
 LLM, Board Only: The model sees just the rendered board and status text, so it must work out for itself whether a move is lethal.
 
 LLM + fatal-move annotation: The same prompt plus an explicit list of which legal moves would kill it this turn, computed by the simulator and handed over rather than inferred
+
 ---
 
 ## Headline result

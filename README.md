@@ -31,30 +31,30 @@ LLM + fatal-move annotation: The same prompt plus an explicit list of which lega
 
 | Agent | Win rate | Death | Timeout | Mean turns |
 |---|---|---|---|---|
-| Random (legal moves only) | 0.0% [0.0–0.0] | 100.0% | 0.0% | 2.2 |
-| Greedy (1-step lookahead, exact forward model) | 18.4% [13.6–23.2] | 0.0% | 81.6% | 8.6 |
-| LLM, board only | 20.4% [15.4–25.4] | 60.8% | 18.8% | 5.1 |
-| **LLM + fatal-move annotation** | **34.0% [28.1–39.9]** | **0.8%** | 65.2% | 8.4 |
+| Random (legal moves only) | 0.0% | 100.0% | 0.0% | 2.2 |
+| Greedy (1-step lookahead, exact forward model) | 18.4% | 0.0% | 81.6% | 8.6 |
+| LLM, board only | 20.4% | 60.8% | 18.8% | 5.1 |
+| **LLM + fatal-move annotation** | **34.0%** | **0.8%** | 65.2% | 8.4 |
 
 95% CIs, normal approximation. `level_3` has a 9-turn limit and no predators, so cornering is 0% throughout.
 
 Without being given an explicit list of deadly moves the LLM agent statistically ties with the greedy agent (20.4% vs 18.4%). This is because the LLM dies 61% of the time while the greedy agent runs out of turns. This confirmed not only be the number of deaths and timeout but the average number of turns the greedy agent takes versus the LLM. 
 
-When the LLM is given an explicit list of deadly moves then the LLM beats Greedy. It win's 34% of the time and only times out 64% of the time. 
+When the LLM is given an explicit list of deadly moves then the LLM beats Greedy. It wins 34% of the time and only times out 65% of the time. 
 
 ### Level 14 — the hard level, 28-turn limit with predators
 
 | Agent | n | Win | Death | Cornered | Timeout | Mean turns |
 |---|---|---|---|---|---|---|
 | Random (legal moves only) | 1000 | 0.0% | 99.4% | 0.6% | 0.0% | 2.9 |
-| Greedy (1-step lookahead) | 1000 | 0.0% | **0.0%** | **56.5%** [53.4–59.6] | 43.5% | 17.7 |
+| Greedy (1-step lookahead) | 1000 | 0.0% | **0.0%** | **56.5%** | 43.5% | 17.7 |
 | LLM, board only | 30 | 0.0% | 96.7% | 3.3% | 0.0% | 11.7 |
-| **LLM + fatal annotation** | 40 | **7.5%** [0.0–15.7] | 10.0% | **32.5%** [18.0–47.0] | 50.0% | 22.3 |
+| **LLM + fatal annotation** | 40 | **7.5%** | 10.0% | **32.5%** | 50.0% | 22.3 |
 
 LLM rows pooled across runs; n is small because each episode is up to 28 sequential API calls.
 
-Level 14 introduces enemeys slimes so 'Cornered' was included as a final state for an agent. This occurs when the agent is cornered by enemy slimes and there is no where safe for it to go.
+Level 14 introduces enemies slimes so 'Cornered' was included as a final state for an agent. This occurs when the agent is cornered by enemy slimes and there is no where safe for it to go.
 
-Here only the LLM agent with the explicit list of deadly moves wins at all. The LLM agent without the explicit list of dead moves survives longer than the greedy agent with an average turn count of 22.3 compared to 17.7
+Here only the LLM agent with the explicit list of deadly moves wins at all. 
 
 --- 

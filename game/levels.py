@@ -7,6 +7,7 @@ LEVELS_DIR = Path(__file__).resolve().parent / "levels"
 LEVELS = {
             "level_14" : ("level_14.csv", "level_14_stats.asset"),
             "level_3" : ("level_3.csv", "level_3_stats.asset"),
+            "level_6" : ("level_6.csv", "level_6_stats.asset"),
             }
 
 def make_sim(name: str) -> Sim:

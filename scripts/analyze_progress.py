@@ -3,11 +3,16 @@ from collections import defaultdict
 from game.levels import make_sim
 from interface.adapter import Outcome, step
 from statistics import mean
+import re
 
 CODE = {"up": "U", "down": "D", "left": "L", "right": "R", None: None}
 run_dir, level = sys.argv[1], sys.argv[2]
 sim = make_sim(level)
 by_outcome = defaultdict(list)
+
+SEED_RE  = re.compile(r"Held seed: (\w+)")
+TALLY_RE = re.compile(r"Currently: (.+)")
+
 
 for f in sorted(glob.glob(f"{run_dir}/ep*.jsonl")):
     turns = [json.loads(l) for l in open(f)]
@@ -15,6 +20,12 @@ for f in sorted(glob.glob(f"{run_dir}/ep*.jsonl")):
     hs, seeds, final = [], [], "TIMEOUT"
 
     for t in turns:
+        seed  = SEED_RE.search(t["prompt"]).group(1) 
+        tally = TALLY_RE.search(t["prompt"]).group(1)
+        shown_seed = SEED_RE.search(t["prompt"]).group(1).upper()
+        true_seed  = state.seed.name
+        if shown_seed != true_seed:
+            print(f"SEED MISMATCH {f} turn {t['turn']}: shown={shown_seed} true={true_seed}")
         h, _raw, _blobs = sim._heuristic_detail(state)
         hs.append(h)
         seeds.append(state.seed)

@@ -36,11 +36,25 @@ LLM + fatal-move annotation: The same prompt plus an explicit list of which lega
 | LLM, board only | 20.4% | 60.8% | 18.8% | 5.1 |
 | **LLM + fatal-move annotation** | **34.0%** | **0.8%** | 65.2% | 8.4 |
 
-95% CIs, normal approximation. `level_3` has a 9-turn limit and no predators, so cornering is 0% throughout.
+`level_3` has a 9-turn limit and no predators, so cornering is 0% throughout.
 
 Without being given an explicit list of deadly moves the LLM agent statistically ties with the greedy agent (20.4% vs 18.4%). This is because the LLM dies 61% of the time while the greedy agent runs out of turns. This confirmed not only be the number of deaths and timeout but the average number of turns the greedy agent takes versus the LLM. 
 
 When the LLM is given an explicit list of deadly moves then the LLM beats Greedy. It wins 34% of the time and only times out 65% of the time. 
+
+### Level 6 — all agents, 2100 episodes each
+
+| Agent | Win rate | Death | Timeout | Mean turns |
+|---|---|---|---|---|
+| Random | 0.0% | 100.0% | 0.0% | 2.2 |
+| Greedy (1-step lookahead) | 13.0%| 0.0% | 87.0% | 11.6 |
+| LLM, board only | 28.0% | 66.0% | 6.0% | 6.1 |
+| **LLM + fatal annotation** | **50.0%** | **1.0%** | 49.0% | 10.8 |
+
+`level_6` has a 12-turn limit and no predators, so cornering is 0% throughout.
+
+Without being given an explicit list of deadly moves the LLM agent statistically outperforms the greedy agent (28.0% vs 13.0%). Similar to level 3, the greedy agents times out very often.
+When the LLM is given an explicit list of deadly moves then the LLM wins 50% significantly beating the LLM alone. 
 
 ### Level 14 — the hard level, 28-turn limit with predators
 

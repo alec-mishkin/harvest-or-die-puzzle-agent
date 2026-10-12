@@ -56,27 +56,35 @@ for f in sorted(glob.glob(f"{run_dir}/ep*.jsonl")):
         "any_futile": futile > 0,
     })
 
-print(f"{'outcome':10} {'n':>4} {'regress':>8} {'max_h':>7} {'cleared':>8} {'switches':>9} {'turns':>6}")
-for out, eps in sorted(by_outcome.items()):
-    cl = [e for e in eps if e["first_clear"] is not None]
-    clear_at = f"{mean(e['first_clear'] for e in cl):7.1f}" if cl else f"{'-':>7}"
-    moves_left = f"{mean(e['moves_left'] for e in cl):10.1f}" if cl else f"{'-':>10}"
-    print(f"{out:10} {len(eps):4} "
-        f"{mean(e['regressions'] for e in eps):8.2f} "
-        f"{mean(e['max_h'] for e in eps):7.2f} "
-        f"{mean(e['cleared_blobs'] for e in eps):8.0%} "
-        f"{mean(e['seed_switches'] for e in eps):9.2f} "
-        f"{mean(e['turns'] for e in eps):6.1f}"
-        f"{mean(e['futile'] for e in eps):7.2f} "
-        f"{mean(e['any_futile'] for e in eps):8.0%} "
-        f"{clear_at} {moves_left}")
+hdr = (f"{'outcome':10} {'n':>4} {'h_up':>6} {'max_h':>6} {'h1_ever':>8} "
+       f"{'seed_sw':>8} {'turns':>6} {'h1_turn':>8} {'after':>6} "
+       f"{'futile':>7} {'any_fut':>8}")
+print(hdr)
+print("-" * len(hdr))
 
-near = [e for e in by_outcome.get("TIMEOUT", []) if e["first_clear"] is not None]
-print(f"\n--- TIMEOUT episodes that reached h<=1  (n={len(near)}) ---")
-for e in sorted(near, key=lambda e: e["moves_left"], reverse=True):
-    print(f"{e['name']:8} cleared at turn {e['first_clear']:2}  "
-    f"{e['moves_left']:2} move(s) left  "
-    f"harvest={str(e['harvest_at_clear']):5} move={e['move_at_clear']}")
+for out, eps in sorted(by_outcome.items()):
+    dipped = [e for e in eps if e["first_clear"] is not None]
+    h1_turn = f"{mean(e['first_clear'] for e in dipped):8.1f}" if dipped else f"{'-':>8}"
+    after   = f"{mean(e['moves_left'] for e in dipped):6.1f}" if dipped else f"{'-':>6}"
+    
+    print(f"{out:10} {len(eps):4} "
+      f"{mean(e['regressions'] for e in eps):6.2f} "
+      f"{mean(e['max_h'] for e in eps):6.2f} "
+      f"{mean(e['cleared_blobs'] for e in eps):8.0%} "
+      f"{mean(e['seed_switches'] for e in eps):8.2f} "
+      f"{mean(e['turns'] for e in eps):6.1f} "
+      f"{h1_turn} {after} "
+      f"{mean(e['futile'] for e in eps):7.2f} "
+      f"{mean(e['any_futile'] for e in eps):8.0%}")
+
+dipped = [e for e in by_outcome.get("TIMEOUT", []) if e["first_clear"] is not None]
+print(f"\n--- TIMEOUT episodes where h dipped to <=1  (n={len(dipped)}) ---")
+print("    h ignores hole colour, so this is NOT a near-win position")
+
+for e in sorted(dipped, key=lambda e: e["moves_left"], reverse=True):
+    print(f"{e['name']:8} h<=1 at turn {e['first_clear']:2}  "
+          f"{e['moves_left']:2} move(s) left  "
+          f"harvest={str(e['harvest_at_clear']):5} move={e['move_at_clear']}")
 
 
 

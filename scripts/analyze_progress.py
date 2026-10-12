@@ -1,9 +1,10 @@
 import json, glob, sys
 from collections import defaultdict
 from game.levels import make_sim
-from interface.adapter import Outcome, step
+from interface.adapter import Outcome, is_futile_harvest, step
 from statistics import mean
 import re
+
 
 CODE = {"up": "U", "down": "D", "left": "L", "right": "R", None: None}
 run_dir, level = sys.argv[1], sys.argv[2]
@@ -17,7 +18,7 @@ TALLY_RE = re.compile(r"Currently: (.+)")
 for f in sorted(glob.glob(f"{run_dir}/ep*.jsonl")):
     turns = [json.loads(l) for l in open(f)]
     state = sim.initial_state()
-    hs, seeds, final = [], [], "TIMEOUT"
+    hs, seeds, final, futile = [], [], "TIMEOUT", 0
 
     for t in turns:
         seed  = SEED_RE.search(t["prompt"]).group(1) 
@@ -29,6 +30,8 @@ for f in sorted(glob.glob(f"{run_dir}/ep*.jsonl")):
         h, _raw, _blobs = sim._heuristic_detail(state)
         hs.append(h)
         seeds.append(state.seed)
+        if is_futile_harvest(sim, state, CODE[t["harvest"]]):
+            futile += 1   
         outcome, state, _ = step(sim, state, CODE[t["harvest"]], CODE[t["move"]])
         if outcome is Outcome.ILLEGAL:
             print(f"REPLAY MISMATCH in {f}"); break
@@ -49,6 +52,8 @@ for f in sorted(glob.glob(f"{run_dir}/ep*.jsonl")):
         "moves_left": (sim.level.turn_limit - first_clear) if first_clear is not None else None,
         "harvest_at_clear": turns[first_clear]["harvest"] if first_clear is not None else None,
         "move_at_clear": turns[first_clear]["move"] if first_clear is not None else None,
+        "futile": futile,
+        "any_futile": futile > 0,
     })
 
 print(f"{'outcome':10} {'n':>4} {'regress':>8} {'max_h':>7} {'cleared':>8} {'switches':>9} {'turns':>6}")
@@ -62,6 +67,8 @@ for out, eps in sorted(by_outcome.items()):
         f"{mean(e['cleared_blobs'] for e in eps):8.0%} "
         f"{mean(e['seed_switches'] for e in eps):9.2f} "
         f"{mean(e['turns'] for e in eps):6.1f}"
+        f"{mean(e['futile'] for e in eps):7.2f} "
+        f"{mean(e['any_futile'] for e in eps):8.0%} "
         f"{clear_at} {moves_left}")
 
 near = [e for e in by_outcome.get("TIMEOUT", []) if e["first_clear"] is not None]

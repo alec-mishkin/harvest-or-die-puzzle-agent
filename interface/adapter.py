@@ -97,3 +97,15 @@ def _illegal_reason(sim, s, harvest_code, move_code):
         return f"can't move {move_code}: wall or edge of board"
     
     return None
+
+def is_futile_harvest(sim, state, harvest_code) -> bool:
+    """ checks if a harvest did not change the game state meaningfully"""
+    if harvest_code is None:
+        return False
+    tgt = _neighbor(state.bunny, harvest_code)
+    if not sim.in_bounds(tgt) or sim.cell_type(state, tgt) is not CT.PLANT:
+        return False
+    return (state.seed is not SolverColor.NONE
+            and sim.cell_color(state, tgt) == state.seed)
+
+

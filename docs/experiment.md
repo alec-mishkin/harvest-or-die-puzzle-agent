@@ -50,3 +50,20 @@ def choose_turn(self, gs: GameState, candidates, error: str | None) -> Turn
 
 **LLM.** `gpt-5.6-luna` through the OpenAI Responses API with structured outputs. The `Turn` Pydantic model is both the tool schema and the response validator, so malformed actions are impossible by construction and format failures are counted separately from bad play. The agent sees only the rendered text prompt. 
 
+## Baseline comparison
+The first experiment compares the random agent, greedy agent, and the LLM agent without hazard annotation
+| Level | Agent | n | Win rate | Death | Cornered | Timeout | Mean turns |
+|---|---|---|---|---|---|---|---|
+| 3 | Random | 250 | 0.0% | 100.0% | 0.0% | 0.0% | 2.2 |
+| 3 | Greedy | 250 | 18.4% [13.6–23.2] | 0.0% | 0.0% | 81.6% | 8.6 |
+| 3 | LLM, board only | 250 | 20.4% [15.4–25.4] | 60.8% | 0.0% | 18.8% | 5.1 |
+| 6 | Random | 100 | 0.0% | 100.0% | 0.0% | 0.0% | 2.2 |
+| 6 | Greedy | 100 | 13.0% [6.4–19.6] | 0.0% | 0.0% | 87.0% | 11.6 |
+| 6 | LLM, board only | 100 | **28.0% [19.2–36.8]** | 66.0% | 0.0% | 6.0% | 6.1 |
+| 14 | Random | 1000 | 0.0% | 99.4% | 0.6% | 0.0% | 2.9 |
+| 14 | Greedy | 1000 | 0.0% | 0.0% | **56.5%** | 43.5% | 17.7 |
+| 14 | LLM, board only | 30 | 0.0% | 96.7% | 3.3% | 0.0% | 11.7 |
+
+
+## Result 1 — hazard annotation raises win rate and near-eliminates deaths
+  

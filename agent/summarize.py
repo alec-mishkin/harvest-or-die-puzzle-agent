@@ -1,5 +1,6 @@
 import argparse, json
 from pathlib import Path
+import math
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--notes", action="store_true", help="show the notes field")
@@ -24,3 +25,9 @@ for r in rows:
     if args.notes:
         line += f"  {r.get('notes','')}"
     print(line)
+
+
+def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
+    if n == 0:
+        return 0.0, 0.0
+

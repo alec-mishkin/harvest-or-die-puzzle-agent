@@ -69,7 +69,7 @@ def play_episode(agent, sim, verbose=True, on_turn = None):
 
     return "TIMEOUT", history
 
-def make_agent(kind, seed,sim):
+def make_agent(kind, seed,sim,show_fatal=False, show_futile=False):
     if kind == "random":
         return RandomAgent(seed=seed)
     if kind == "greedy":
@@ -86,10 +86,11 @@ if __name__ == "__main__":
     ap.add_argument("--level", default="level_3", choices=[*LEVELS])
     ap.add_argument("--episodes", type=int, default=1)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--show-fatal", action="store_true")
+    ap.add_argument("--show-futile", action="store_true")
     args = ap.parse_args()
     
 
-    level = build_level(DEFAULT_LEVEL, DEFAULT_STATS)
     sim = make_sim(args.level)
 
     if args.episodes == 1:

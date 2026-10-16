@@ -103,6 +103,7 @@ if __name__ == "__main__":
     ap.add_argument("--notes", default="")
     ap.add_argument("--transcripts", action="store_true")
     ap.add_argument("--show-fatal", action="store_true")
+    ap.add_argument("--show-futile", action="store_true")
     ap.add_argument("--workers", type=int, default=1)
     args = ap.parse_args()
 
@@ -114,7 +115,9 @@ if __name__ == "__main__":
         if args.agent == "greedy":
             return GreedyAgent(sim, seed=seed, key=args.key)
         if args.agent == "openai":
-             return OpenAIAgent(model="gpt-5.6-luna", show_fatal=args.show_fatal)
+             return OpenAIAgent(model="gpt-5.6-luna", 
+                                show_fatal=args.show_fatal,
+                                show_futile=args.show_futile)
     
     record = run_experiment(factory, sim, args.level, args.episodes,
                             args.seed_start, args.notes, args.transcripts)

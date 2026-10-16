@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from interface.action import Turn
 from interface.serializer import to_prompt
+from interface.annotations import futile_harvests 
 from agent.prompts import SYSTEM_V1
 
 load_dotenv()

@@ -10,10 +10,11 @@ SYSTEM = SYSTEM_V1   # same system prompt
 
 class OpenAIAgent:
     def __init__(self, model="gpt-5.6-luna", max_calls=200,
-                 prompt_version="v1", show_fatal=False):
+                 prompt_version="v1", show_fatal=False, show_futile=False):
         self.model = model
         self.prompt_version = prompt_version
         self.show_fatal = show_fatal
+        self.show_futile = show_futile
         self.client = OpenAI()          # reads OPENAI_API_KEY from env
         self.max_calls = max_calls
         self.calls = 0
@@ -39,6 +40,17 @@ class OpenAIAgent:
             if fatal:
                 lines = [f"- harvest {t.harvest or 'none'}, move {t.move}" for t in fatal]
                 content += "\n\nFATAL this turn — these legal moves would kill you:\n" + "\n".join(lines)
+        
+        if self.show_futile:
+            fut = futile_harvests(gs)
+            if fut:
+                dirs = ", ".join(d.value for d in fut)
+                content += (f"\n\nPOINTLESS this turn: harvesting {dirs} targets a "
+                            f"{gs.held_seed.upper()} plant while you hold {gs.held_seed.upper()}. "
+                            f"Those tiles would regrow the same colour and your seed would not "
+                            f"change — the board ends up unaltered, with the tiles sitting as "
+                            f"holes for two turns. To convert a region, hold the colour you want "
+                            f"and harvest a colour you are NOT holding.")
 
         if error:
             content += f"\n\nYour previous choice was rejected: {error}\nChoose a different, legal move."

@@ -1,7 +1,10 @@
 import json, glob, sys
 from collections import defaultdict
 from game.levels import make_sim
-from interface.adapter import Outcome, is_futile_harvest, step
+from interface.adapter import Outcome, step, to_game_state 
+from interface.annotations import futile_harvests
+from interface.action import Direction
+
 from statistics import mean
 import re
 
@@ -30,7 +33,9 @@ for f in sorted(glob.glob(f"{run_dir}/ep*.jsonl")):
         h, _raw, _blobs = sim._heuristic_detail(state)
         hs.append(h)
         seeds.append(state.seed)
-        if is_futile_harvest(sim, state, CODE[t["harvest"]]):
+        #if is_futile_harvest(sim, state, CODE[t["harvest"]]):
+        gs = to_game_state(sim, state)
+        if t["harvest"] and Direction(t["harvest"]) in futile_harvests(gs):
             futile += 1   
         outcome, state, _ = step(sim, state, CODE[t["harvest"]], CODE[t["move"]])
         if outcome is Outcome.ILLEGAL:

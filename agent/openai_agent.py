@@ -28,6 +28,7 @@ class OpenAIAgent:
                 "model": self.model,
                 "prompt_version": self.prompt_version,
                 "show_fatal": self.show_fatal,
+                "show_futile": self.show_futile,
         }
 
     def choose_turn(self, gs, candidates, error=None):

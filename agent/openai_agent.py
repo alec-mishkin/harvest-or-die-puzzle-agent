@@ -16,7 +16,7 @@ class OpenAIAgent:
         self.prompt_version = prompt_version
         self.show_fatal = show_fatal
         self.show_futile = show_futile
-        self.client = OpenAI()          # reads OPENAI_API_KEY from env
+        self.client = OpenAI(timeout=90.0, max_retries=6)          # reads OPENAI_API_KEY from env
         self.max_calls = max_calls
         self.calls = 0
         self.input_tokens = 0

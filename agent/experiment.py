@@ -32,8 +32,20 @@ def git_sha():
 def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes="",transcripts=False, workers=1):
     run_id = time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:4]
     tdir = TRANSCRIPT_ROOT / run_id 
+    meta_agent = make_agent_fn(seed_start)     # for config/type only; makes no API call
     if transcripts:
         tdir.mkdir(parents=True, exist_ok=True)
+        (tdir / "meta.json").write_text(json.dumps({
+        "run_id": run_id,
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "git_sha": git_sha(),
+        "agent": type(meta_agent).__name__,
+        "agent_config": meta_agent.config() if hasattr(meta_agent, "config") else {},
+        "level": level_name,
+        "episodes": episodes,
+        "seed_start": seed_start,
+        "notes": notes,
+        }, indent=2))
 
     outcomes, turns, win_turns, episode_results = Counter(), [], [], []
     in_tok = out_tok = 0
@@ -47,12 +59,14 @@ def run_experiment(make_agent_fn, sim, level_name, episodes, seed_start=0, notes
                 _f.flush()
         try:
             result, history = play_episode(agent, sim, verbose=False, on_turn=on_turn)
+        except Exception as e:
+            print(f"  ep{i:03d}: ERROR {type(e).__name__}: {e}", flush=True)
+            return i, "ERROR", 0, agent.input_tokens, agent.output_tokens
         finally:
             if f:
                 f.close()
         print(f"  ep{i:03d}: {result}", flush=True)
         return i, result, len(history), agent.input_tokens, agent.output_tokens
-    meta_agent = make_agent_fn(seed_start)     # for config/type only; makes no API call
     with ThreadPoolExecutor(max_workers=workers) as ex:
         results = list(ex.map(run_one, range(episodes)))
 

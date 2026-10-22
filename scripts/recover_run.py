@@ -45,3 +45,75 @@ def main():
 
     outcomes, turns, win_turns = Counter(), [], []
     episode_results = []
+
+    sim = make_sim(args.level)
+    limit = sim.level.turn_limit
+    has_predators = bool(sim.level.spawn_points)
+
+    outcomes, turns, win_turns = Counter(), [], []
+    episode_results = []
+
+    for f in sorted(tdir.glob("ep*.jsonl")):
+        lines = [json.loads(l) for l in f.read_text().splitlines() if l.strip()]
+        res = classify(lines, limit)
+        outcomes[res] += 1
+        episode_results.append(res)
+        if res not in ("UNRESOLVED","EMPTY"):
+            turns.append((len(lines)))
+            if res = "WIN":
+                win_turns.append(len(lines))
+    completed = sum(v for k, v in outcomes.items() if k not in ("UNRESOLVED", "EMPTY"))
+
+    if completed == 0:
+        ap.error("no completed episodes found")
+
+    record = {
+        "run_id": args.run_id
+        "timestamp": None,
+        "git_sha": "reconstructed",
+        "agent": "OpenAIAgent",
+        "agent_config": {
+            "model": args.model,
+            "prompt_version": args.prompt_version
+            "show_fatal": args.show_fatal,
+            "show_futile": args.show_futile,
+        }
+        "level": args.level,
+        "episodes": len(episode_results),
+        "competed": completed,
+        "seed_start": 0,
+        "outcomes": dict(outcomes),
+        "episode_results": episode_results,
+        "win_rate": outcomes["WIN"] / completed,
+        "mean_turns": sum(turns) / len(turns),
+        "mean_win_turns": (sum(win_turns)/len(win_turns)) if win_turns else None,
+        "input_tokes": None,
+        "output_tokens": None,
+        "transcripts": str(tdir.relative_to("REPO_ROOT")),
+        "notes": (args.notes + " [RECONSTRUCTED from transcripts after an interrupted "
+                  "run; rates are over `completed`, token counts unavailable]").strip(),
+    }
+
+    print(json.dumps(record, indent=2))
+    print()
+    print(f"completed={completed}  win_rate={record['win_rate']:.1%}  "
+          f"mean_turns={record['mean_turns']:.1f}")
+ 
+    if outcomes["UNRESOLVED"]:
+        print(f"\n{outcomes['UNRESOLVED']} UNRESOLVED episode(s) excluded from rates.")
+        if has_predators:
+            print("  WARNING: this level has predators, so UNRESOLVED conflates CORNERED "
+                  "with episodes cut off mid-flight. Treat the cornering rate as unknown.")
+        else:
+            print("  No predators on this level, so these are episodes cut off mid-flight.")
+ 
+    if args.append:
+        with RESULTS.open("a") as fh:
+            fh.write(json.dumps(record) + "\n")
+        print(f"\nappended to {RESULTS}")
+    else:
+        print("\n(not written -- pass --append to add it to runs.jsonl)")
+ 
+ 
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,16 @@
+{
+  "run_id": "20261022-070442-2a58",
+  "timestamp": "2026-10-22T07:04:43",
+  "git_sha": "7500d56",
+  "agent": "OpenAIAgent",
+  "agent_config": {
+    "model": "gpt-5.6-luna",
+    "prompt_version": "v1",
+    "show_fatal": true,
+    "show_futile": false
+  },
+  "level": "level_6",
+  "episodes": 400,
+  "seed_start": 0,
+  "notes": "400 more show-fatal no show-futile episodes"
+}

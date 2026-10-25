@@ -37,7 +37,7 @@ def group_counts(runs: dict, ids: list[str], outcome: str) -> tuple[int, int, li
         cfg = ", ".join(f"{a}={b}" for a, b in r["agent_config"].items())
         labels.append(f"    {rid}  {r['agent']:12} {r['level']:9} "
                       f"{ki:4}/{ni:<5} {ki/ni:6.1%}   {cfg}")
-        return k, n, labels
+    return k, n, labels
 
 def compare(args):
     runs = load_runs()
@@ -64,38 +64,38 @@ def compare(args):
         lo, hi = proportion_confint(k, n, alpha=0.05, method="wilson")
         print(f"  pooled {lbl}: {k}/{n} = {k/n:.1%}   95% Wilson [{lo:.1%}-{hi:.1%}]")
 
-        diff = kb / nb - ka / na
-        print(f"\n  difference (B - A): {diff*100:+.1f} points")
+    diff = kb / nb - ka / na
+    print(f"\n  difference (B - A): {diff*100:+.1f} points")
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RuntimeWarning)
-            _, p_z = proportions_ztest([ka, kb], [na, nb])
-        if math.isnan(p_z):
-            p_z = 1.0
-        _, p_f = fisher_exact([[ka, na-ka], [kb, nb-kb]])
-        small = min(ka, na-ka, kb, nb - kb) < 5
-        chosen, p = ("Fisher exact", p_f) if small else ("two-proportion z", p_z)
-        
-        print(f"\n  test: {chosen}" + ("  (a cell is < 5)" if small else ""))
-        print(f"  p = {p:.3g}")
-        if p_z > 0 and p_f > 0 and abs(math.log10(p_z) - math.log10(p_f)) > 1:
-            print(f"  NOTE: the two tests disagree by >1 order of magnitude "
-                f"(z={p_z:.2g}, fisher={p_f:.2g}); trust the exact test.")
-        
-        base = ka / na
-        if 0 < base < 1:
-            try: 
-                det = opt.brentq(
-                    lambda t: zt_ind_solve_power(
-                        effect_size=proportion_effectsize(t, base), alpha=0.05,
-                        power=0.80, ratio=nb / na, alternative="two-sided") - na,
-                        min(base + 1e-4, 0.999), 0.999)
-                print(f"\n  at 80% power this design detects {base:.1%} -> {det:.1%} "
-                f"({(det-base)*100:+.1f} points)")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        _, p_z = proportions_ztest([ka, kb], [na, nb])
+    if math.isnan(p_z):
+        p_z = 1.0
+    _, p_f = fisher_exact([[ka, na-ka], [kb, nb-kb]])
+    small = min(ka, na-ka, kb, nb - kb) < 5
+    chosen, p = ("Fisher exact", p_f) if small else ("two-proportion z", p_z)
+    
+    print(f"\n  test: {chosen}" + ("  (a cell is < 5)" if small else ""))
+    print(f"  p = {p:.3g}")
+    if p_z > 0 and p_f > 0 and abs(math.log10(p_z) - math.log10(p_f)) > 1:
+        print(f"  NOTE: the two tests disagree by >1 order of magnitude "
+            f"(z={p_z:.2g}, fisher={p_f:.2g}); trust the exact test.")
+    
+    base = ka / na
+    if 0 < base < 1:
+        try: 
+            det = opt.brentq(
+                lambda t: zt_ind_solve_power(
+                    effect_size=proportion_effectsize(t, base), alpha=0.05,
+                    power=0.80, ratio=nb / na, alternative="two-sided") - na,
+                    min(base + 1e-4, 0.999), 0.999)
+            print(f"\n  at 80% power this design detects {base:.1%} -> {det:.1%} "
+            f"({(det-base)*100:+.1f} points)")
 
 
-            except ValueError:
-                pass
+        except ValueError:
+            pass
 
 def power(args):
     det = opt.brentq(

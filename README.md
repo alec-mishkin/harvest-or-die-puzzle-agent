@@ -72,3 +72,43 @@ Level 14 introduces enemies slimes so 'Cornered' was included as a final state f
 Here only the LLM agent with the explicit list of deadly moves wins at all. 
 
 --- 
+
+### What the agent does when it loses
+
+To understand why the LLM agent was timing out the avrage number of 
+
+| outcome | n | seed switches | turns | futile harvests | ≥1 futile |
+|---|---|---|---|---|---|
+| WIN | 50 | 5.18 | 9.8 | **0.22** | **18%** |
+| TIMEOUT | 49 | 4.45 | 12.0 | **1.10** | **76%** |
+| DEATH | 1 | 2.00 | 3.0 | 1.00 | 100% |
+
+Per-episode means, level 6, n = 100. `level_6` has a 12-turn limit.
+
+Across 100 episodes on level 6 there were 50 wins, 49 timeouts, and one death. Timeouts correlate strongly with futile harvests. A futile harvest is when the agent harvests a plant whose color matches the seed it is already holding: the region regrows that same color and the seed does not change, so once the holes close the board is exactly as it was. On a level with predators this can be deliberate, since a predator forced onto a hole dies but level 6 has no predators, so it is simply a wasted turn. Winning episodes averaged 0.22 futile harvests and only 18% contained one at all; timeouts averaged 1.10, and 76% contained at least one.
+
+## Fixing the futile harvests didn't help
+
+To fix this the futile harvests issue the LLM was told when a move would be futile, similar to the approach that worked for fatal moves.
+
+**The agent listened.** Futile harvests dropped by roughly a factor of five:
+
+| | annotation off | annotation on |
+|---|---|---|
+| timeout episodes with ≥1 futile harvest | 68.8% | **23.2%** |
+| futile harvests per timeout episode | 1.08 | **0.22 / 0.29** |
+| futile harvests per winning episode | 0.27 | **0.03 / 0.05** |
+
+**And it won no more often.**
+
+| condition | n | win rate | 95% CI |
+|---|---|---|---|
+| annotation off | 400 | 59.2% | [54.4–64.0] |
+| annotation on | 500 | 60.2% | [55.8–64.4] |
+
+A difference of +0.9 points, *p* = 0.773. The design had 80% power to detect a 9-point shift, so
+this is a resolved null rather than a sample too small to tell.
+
+So the futile harvest was a **symptom of losing, not a cause of it**. 
+
+Reproduce: `python -m scripts.stats compare WIN 20261022-070442-2a58 vs 20261020-063246-27d4 20261016-195501-48f3

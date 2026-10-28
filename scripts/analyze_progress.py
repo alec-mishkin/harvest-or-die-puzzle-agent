@@ -33,7 +33,7 @@ for f in sorted(glob.glob(f"{run_dir}/ep*.jsonl")):
         h, _raw, _blobs = sim._heuristic_detail(state)
         hs.append(h)
         seeds.append(state.seed)
-        #if is_futile_harvest(sim, state, CODE[t["harvest"]]):
+        
         gs = to_game_state(sim, state)
         if t["harvest"] and Direction(t["harvest"]) in futile_harvests(gs):
             futile += 1   
@@ -80,7 +80,8 @@ for out, eps in sorted(by_outcome.items()):
       f"{mean(e['turns'] for e in eps):6.1f} "
       f"{h1_turn} {after} "
       f"{mean(e['futile'] for e in eps):7.2f} "
-      f"{mean(e['any_futile'] for e in eps):8.0%}")
+      f"{mean(e['any_futile'] for e in eps):8.0%}"
+      f"{sum(e['any_futile'] for e in eps):4}/{len(eps):<5}")
 
 dipped = [e for e in by_outcome.get("TIMEOUT", []) if e["first_clear"] is not None]
 print(f"\n--- TIMEOUT episodes where h dipped to <=1  (n={len(dipped)}) ---")
